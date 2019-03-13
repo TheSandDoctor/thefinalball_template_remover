@@ -61,7 +61,7 @@ def save_edit(page, utils, text):
                 #print(page.page_title)
                 print("Saved page")
                 with open("thefinalball_saved.txt",'a+') as file:
-                    file.write(str(page.page_title))
+                    file.write(str(page.page_title) + '\n')
                 if time == 1:
                     time = 0
                 break
