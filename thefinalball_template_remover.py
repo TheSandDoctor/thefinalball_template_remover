@@ -98,7 +98,7 @@ def remove_deprecated_params(text):
 
 def main():
     limited_run = True
-    pages_to_run = 20
+    pages_to_run = 9
     offset = 0
     #raise ValueError("for testing, dont want whole script running")
 
