@@ -44,7 +44,7 @@ def save_edit(page, utils, text):
 
      if not call_home(site):#config):
         raise ValueError("Kill switch on-wiki is false. Terminating program.")
-     edit_summary = 'Removed deprecated template [[Template:TheFinalBall]] using ' +  "[[User:" + config.get('enwikidep','username') + "| " + config.get('enwikidep','username') + "]]. Mistake? [[User talk:TheSandDoctor|msg TSD!]] (please mention that this is task #7!)"
+     edit_summary = 'Removed deprecated template [[Template:TheFinalBall]] using ' +  "[[User:" + config.get('enwikidep','username') + "| " + config.get('enwikidep','username') + "]]. Mistake? [[User talk:TheSandDoctor|msg TSD!]] (please mention that this is task #7!; [[Wikipedia:Bots/Requests for approval/DeprecatedFixerBot 7|BRFA in progress]])"
      time = 0
      while True:
          if time == 0:
@@ -98,7 +98,7 @@ def remove_deprecated_params(text):
 
 def main():
     limited_run = True
-    pages_to_run = 1
+    pages_to_run = 20
     offset = 0
     #raise ValueError("for testing, dont want whole script running")
 
@@ -113,14 +113,15 @@ def main():
         raise ValueError("Login failed.")
     counter = 0
     utils = [config,None,site,False]
-    for page in getTransclusions(site,"Template:TheFinalBall"):
+    for p in getTransclusions(site,"Template:TheFinalBall"):
+        page = site.Pages[p]
         if offset > 0:
             offset -= 1
             counter += 1
             print("Skipped due to offset config")
             continue
         if counter < pages_to_run:
-            print("Working with: " + page.name + " Count: " + str(counter))
+            print("Working with: " + page.page_title + " Count: " + str(counter))
             text = page.text()
             try:
                 save_edit(page, utils, text)
