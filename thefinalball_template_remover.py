@@ -85,7 +85,13 @@ def remove_deprecated_params(text):
     wikicode = mwparserfromhell.parse(text)
     templates = wikicode.filter_templates()
     content_changed = False
-
+    original_text = text
+    text = re.sub(r'<ref>.*{{ogol(\s*)?(\|.*)?}}.*<\/ref>','',string=text,flags=re.IGNORECASE|re.MULTILINE)
+    text = re.sub(r'<ref>.*{{TheFinalBall(\s*)?(\|.*)?}}.*<\/ref>','',string=text,flags=re.IGNORECASE|re.MULTILINE)
+    text = re.sub(r'<ref>.*{{TheFinalBall player(\s*)?(\|.*)?}}.*<\/ref>','',string=text,flags=re.IGNORECASE|re.MULTILINE)
+    text = re.sub(r'<ref>.*{{Zerozero(\s*)?(\|.*)?}}.*<\/ref>','',string=text,flags=re.IGNORECASE|re.MULTILINE)
+    text = re.sub(r'<ref>.*{{Zerozero profile(\s*)?(\|.*)?}}.*<\/ref>','',string=text,flags=re.IGNORECASE|re.MULTILINE)
+    content_changed = original_text is not text
     code = mwparserfromhell.parse(text)
     for template in code.filter_templates():
         if (template.name.matches("TheFinalBall") or template.name.matches("OGol")
@@ -113,6 +119,18 @@ def main():
         raise ValueError("Login failed.")
     counter = 0
     utils = [config,None,site,False]
+    
+    # page = site.Pages['User:DeprecatedFixerBot/sandbox']
+    #print("Working with: " + page.page_title)
+    #text = page.text()
+    #try:
+    #   save_edit(page, utils, text)
+    #except [[EditError]]:
+    #   print("Edit error")
+    #except [[ProtectedPageError]]:
+    #   print('Could not edit ' + page.page_title + ' due to protection')
+
+    #sys.exit(0)
     for p in getTransclusions(site,"Template:TheFinalBall"):
         page = site.Pages[p]
         if offset > 0:
