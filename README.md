@@ -1,0 +1,2 @@
+# thefinalball_template_remover
+This project was created to enact community consensus by removing the template TheFinalBall and its aliases (redirects) wherever present on the English Wikipedia. This task made it through two successful trials before being shelved and [procedurally denied](https://en.wikipedia.org/wiki/Wikipedia:Bots/Requests_for_approval/DeprecatedFixerBot_7) due to lack of work left because editors had already processed the rest of the removals. This repository is now an archive with no further work planned at this time.
