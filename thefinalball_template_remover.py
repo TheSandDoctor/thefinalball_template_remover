@@ -9,7 +9,15 @@ import time
 from mwclient import *
 
 
-def getTransclusions(site, page, sleep_duration=None):
+def getTransclusions(site: mwclient.Site, page: str, sleep_duration: int = None) -> list:
+    """
+    Get template transclusions. These occur when a template is present on a page and are essentially a list of pages
+    that a specific template appears on.
+    :param site: mwclient.Site object for the site you are currently on
+    :param page: template to get the transclusions of
+    :param sleep_duration: time to sleep between requests
+    :return: list of pages that transclude
+    """
     cont = None
     pages = []
     i = 1
@@ -32,7 +40,13 @@ def getTransclusions(site, page, sleep_duration=None):
             return pages
 
 
-def call_home(site):
+def call_home(site: mwclient.Site) -> bool:
+    """
+    Check if still allowed to edit and that the value at User:DeprecatedFixerBot/status's run: thefinalball has not
+    been updated to false.
+    :param site: mwclient.Site object for the site you are currently on
+    :return: if able to edit
+    """
     page = site.Pages['User:DeprecatedFixerBot/status']
     text = page.text()
     data = json.loads(text)['run']['thefinalball']
@@ -41,9 +55,15 @@ def call_home(site):
     return False
 
 
-def save_edit(page, utils, text):
+def save_edit(page: mwclient, utils: list, text: str) -> None:
+    """
+    Save edit to page. This calls remove_finalball_templates() and saves the result.
+    :param page: mwclient.page.Page object to save to
+    :param utils: list containing config and site object, respectively
+    :param text: page text
+    """
     config = utils[0]
-    site = utils[2]
+    site = utils[1]
     original_text = text
 
     if not call_home(site):
@@ -59,7 +79,7 @@ def save_edit(page, utils, text):
         if times_over == 1:
             page.purge()  # Time to start over, purge the page to ensure getting newest version
             original_text = site.Pages[page.page_title].text()  # Get a new copy of the article's text
-        content_changed, text = remove_deprecated_params(original_text)
+        content_changed, text = remove_finalball_templates(original_text)
         try:
             if not content_changed:
                 break  # Content not changed, so don't bother trying to save it/going over it
@@ -83,11 +103,11 @@ def save_edit(page, utils, text):
         break
 
 
-def remove_deprecated_params(text):
+def remove_finalball_templates(text: str) -> list:
     """
     Removes the {{TheFinalBall}} template (and its redirects)
-    @param text Page text to go over
-    @returns [content_changed, content] Whether content was changed,
+    :param text: Page text to go over
+    :return: [content_changed, content] Whether content was changed,
     (if former true, modified) content.
     """
     original_text = text
@@ -110,7 +130,7 @@ def remove_deprecated_params(text):
     return [content_changed, str(code)]  # get back text to save
 
 
-def main():
+def main() -> None:
     # These two variables are to control how many pages are ran
     pages_to_run = 9
     offset = 0
@@ -124,7 +144,7 @@ def main():
         print(e)
         raise ValueError("Login failed.")
     counter = 0
-    utils = [config, None, site, False]
+    utils = [config, site]
     for p in getTransclusions(site, 'Template:TheFinalBall'):
         page = site.Pages[p]
         if offset > 0:
